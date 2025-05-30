@@ -26,14 +26,6 @@ export default {
           body: JSON.stringify(payload),
         })
       );
-
-      ctx.waitUntil(
-        fetch('https://api.crawlconsole.com/v1/visit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-      );
     } catch (err) {
       console.error(err);
     }
