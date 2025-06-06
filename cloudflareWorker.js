@@ -6,7 +6,6 @@ export default {
       const clientIP = headers['cf-connecting-ip'];
 
       const payload = {
-        api_key: env.CRAWLCONSOLE_API_KEY,
         project_key: env.CRAWLCONSOLE_PROJECT_KEY,
         user_agent: headers['user-agent'] || null,
         path: url.pathname,
@@ -22,7 +21,10 @@ export default {
       ctx.waitUntil(
         fetch('https://api.crawlconsole.com/v1/track', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': env.CRAWLCONSOLE_API_KEY,
+          },
           body: JSON.stringify(payload),
         })
       );
