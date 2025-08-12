@@ -1,9 +1,14 @@
 export default {
   async fetch(request, env, ctx) {
+    let response;
     try {
       const url = new URL(request.url);
       const headers = Object.fromEntries(request.headers.entries());
       const clientIP = headers['cf-connecting-ip'];
+
+      // Fetch the actual response to get the status code
+      response = await fetch(request);
+      const statusCode = response.status;
 
       const payload = {
         project_key: env.CRAWLCONSOLE_PROJECT_KEY,
@@ -15,7 +20,7 @@ export default {
         referrer_domain: headers['referer']
           ? new URL(headers['referer']).hostname
           : null,
-        headers: headers,
+        status_code: statusCode,
       };
 
       ctx.waitUntil(
@@ -30,8 +35,9 @@ export default {
       );
     } catch (err) {
       console.error(err);
+      // Optionally, send a failed status_code to tracking as well
     }
 
-    return fetch(request);
+    return response || new Response('Internal Error', { status: 500 });
   },
 };
